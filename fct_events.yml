@@ -1,0 +1,19 @@
+module:
+  identifier: "fct_events"
+  schema: "marts"
+  table: "fct_events"
+  label: "Events"
+  description: "GA4 Events"
+  dimensions:
+    - column: "event_name"
+      type: "categorical"
+      description: ""
+      label: "Event Name"
+  metrics:
+    - identifier: "count_events"
+      name: "# of Events"
+      time: "fct_events.event_date"
+      description: "Count of events"
+      calculation: "count"
+      dimensions:
+        - "event_name"
