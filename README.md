@@ -14,4 +14,4 @@ This is not a standalone project. The underlying warehouse models, data, credent
 
 ## Rights
 
-No open-source license is granted. Copyright © 2026 Tim Finkel. All rights reserved.
+No open-source license is granted. All rights reserved.
