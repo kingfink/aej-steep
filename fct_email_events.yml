@@ -9,6 +9,14 @@ module:
       type: "categorical"
       label: "Event Type"
       description: "Provider-independent event type such as delivered, opened, or clicked."
+    - column: "is_engagement"
+      type: "categorical"
+      label: "Is Engagement"
+      description: "Whether the event is an open or click."
+    - column: "is_privacy_or_bot_like"
+      type: "categorical"
+      label: "Is Privacy or Bot Like"
+      description: "Whether an open or click was classified as privacy-proxied or bot-like."
   metrics:
     - identifier: "email_events"
       name: "Email events"
@@ -43,13 +51,19 @@ module:
             expression: "bounced"
       dimensions:
         - "event_type"
+        - "is_engagement"
+        - "is_privacy_or_bot_like"
     - identifier: "engaged_email_subscribers"
       name: "Engaged email subscribers"
-      description: "Unique subscribers with an open or click that was not classified as privacy-proxied or automated activity."
+      description: "Unique known subscribers with an open or click. Privacy-proxied and bot-like activity remains included and can be filtered using the available dimension."
       category: "Email"
-      type: "custom-value"
+      type: "count-distinct"
       time: "fct_email_events.event_ts"
-      sql_expression: |
-        count(distinct if(fct_email_events.event_type in ('opened', 'clicked') and coalesce(json_value(fct_email_events.email_event_details, '$.is_privacy_or_bot_like') != 'true', true), fct_email_events.subscriber_id, null))
+      distinct_on: "fct_email_events.subscriber_id"
+      filters:
+        - column: "is_engagement"
+          operator: "equals"
+          expression: "true"
       dimensions:
         - "event_type"
+        - "is_privacy_or_bot_like"

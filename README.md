@@ -6,8 +6,9 @@ This repository is published as a small reference and showcase of defining metri
 
 ## Models
 
-- [`dim_email_subscribers.yml`](dim_email_subscribers.yml) defines subscriber counts and current subscription-status slices.
-- [`fct_email_events.yml`](fct_email_events.yml) defines email activity and engaged-subscriber metrics.
+- [`fct_email_subscribers_daily.yml`](fct_email_subscribers_daily.yml) defines the historical subscriber-population metric.
+- [`fct_email_events.yml`](fct_email_events.yml) defines event activity and unique engaged-subscriber metrics.
+- [`fct_email_subscriber_messages.yml`](fct_email_subscriber_messages.yml) defines subscriber-message outcomes and delivery, open, and click rates.
 - [`fct_events.yml`](fct_events.yml) defines a Steep module and event-count metric for GA4 events. It depends on legacy SQLMesh models and is scheduled for deprecation, but is retained here as an example of the original semantic-layer implementation.
 
 Current Analytics Engineering Jobs transformations live in [aej-dbt](https://github.com/kingfink/aej-dbt).
