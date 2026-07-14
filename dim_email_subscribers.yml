@@ -1,0 +1,33 @@
+module:
+  identifier: "dim_email_subscribers"
+  schema: "marts"
+  table: "dim_email_subscribers"
+  label: "Email Subscribers"
+  description: "One row per normalized email address with its current Resend subscription status and known subscription history."
+  dimensions:
+    - column: "is_subscribed"
+      type: "categorical"
+      label: "Is Subscribed"
+      description: "Whether the address is currently subscribed in Resend."
+  metrics:
+    - identifier: "email_subscribers"
+      name: "Email subscribers"
+      description: "Number of known email subscribers, attributed to their earliest known subscription date. Current status reflects Resend; historical SendGrid data does not establish current subscription status."
+      category: "Email"
+      type: "count"
+      time: "dim_email_subscribers.min_subscribed_ts"
+      slices:
+        - name: "Currently subscribed"
+          identifier: "currently_subscribed"
+          filter:
+            column: "is_subscribed"
+            operator: "equals"
+            expression: "true"
+        - name: "Unsubscribed"
+          identifier: "unsubscribed"
+          filter:
+            column: "is_subscribed"
+            operator: "equals"
+            expression: "false"
+      dimensions:
+        - "is_subscribed"

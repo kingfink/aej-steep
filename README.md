@@ -4,9 +4,11 @@ Steep semantic-layer definitions created for [Analytics Engineering Jobs](https:
 
 This repository is published as a small reference and showcase of defining metrics in code with [Steep](https://steep.app/). It is maintained for my own use; issues and pull requests are not accepted.
 
-## Model
+## Models
 
-[`fct_events.yml`](fct_events.yml) defines a Steep module and event-count metric for GA4 events. It depends on legacy SQLMesh models and is scheduled for deprecation, but is retained here as an example of the original semantic-layer implementation.
+- [`dim_email_subscribers.yml`](dim_email_subscribers.yml) defines subscriber counts and current subscription-status slices.
+- [`fct_email_events.yml`](fct_email_events.yml) defines email activity and engaged-subscriber metrics.
+- [`fct_events.yml`](fct_events.yml) defines a Steep module and event-count metric for GA4 events. It depends on legacy SQLMesh models and is scheduled for deprecation, but is retained here as an example of the original semantic-layer implementation.
 
 Current Analytics Engineering Jobs transformations live in [aej-dbt](https://github.com/kingfink/aej-dbt).
 

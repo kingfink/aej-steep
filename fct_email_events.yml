@@ -1,0 +1,55 @@
+module:
+  identifier: "fct_email_events"
+  schema: "marts"
+  table: "fct_email_events"
+  label: "Email Activity"
+  description: "One row per provider email event and recipient across Resend and SendGrid."
+  dimensions:
+    - column: "event_type"
+      type: "categorical"
+      label: "Event Type"
+      description: "Provider-independent event type such as delivered, opened, or clicked."
+  metrics:
+    - identifier: "email_events"
+      name: "Email events"
+      description: "Number of provider email events, including delivery and recipient activity."
+      category: "Email"
+      type: "count"
+      time: "fct_email_events.event_ts"
+      slices:
+        - name: "Delivered"
+          identifier: "delivered"
+          filter:
+            column: "event_type"
+            operator: "equals"
+            expression: "delivered"
+        - name: "Opened"
+          identifier: "opened"
+          filter:
+            column: "event_type"
+            operator: "equals"
+            expression: "opened"
+        - name: "Clicked"
+          identifier: "clicked"
+          filter:
+            column: "event_type"
+            operator: "equals"
+            expression: "clicked"
+        - name: "Bounced"
+          identifier: "bounced"
+          filter:
+            column: "event_type"
+            operator: "equals"
+            expression: "bounced"
+      dimensions:
+        - "event_type"
+    - identifier: "engaged_email_subscribers"
+      name: "Engaged email subscribers"
+      description: "Unique subscribers with an open or click that was not classified as privacy-proxied or automated activity."
+      category: "Email"
+      type: "custom-value"
+      time: "fct_email_events.event_ts"
+      sql_expression: |
+        count(distinct if(fct_email_events.event_type in ('opened', 'clicked') and coalesce(json_value(fct_email_events.email_event_details, '$.is_privacy_or_bot_like') != 'true', true), fct_email_events.subscriber_id, null))
+      dimensions:
+        - "event_type"
