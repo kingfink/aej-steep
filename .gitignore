@@ -1,0 +1,14 @@
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+.envrc
+*.key
+*.pem
+service-account*.json
+gcp-sa-key*.json
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
