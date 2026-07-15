@@ -1,0 +1,23 @@
+module:
+  identifier: "fct_email_subscribers_daily"
+  schema: "marts"
+  table: "fct_email_subscribers_daily"
+  label: "Daily Email Subscribers"
+  description: "One row per UTC date and known subscriber, indicating whether the subscriber was subscribed at any point during the date."
+  dimensions:
+    - column: "is_subscribed"
+      type: "categorical"
+      label: "Was Subscribed on Date"
+      description: "Whether the subscriber entered the date subscribed or subscribed during the date. This is historical daily state, not current subscriber state."
+  metrics:
+    - identifier: "email_subscribers"
+      name: "Email subscribers"
+      description: "Number of subscribers active at any point during each UTC date. SendGrid state is used through the Resend contact-import date and Resend state thereafter."
+      category: "Email"
+      type: "count"
+      time: "fct_email_subscribers_daily.date_day"
+      time_resampling: "average/repeat"
+      filters:
+        - column: "is_subscribed"
+          operator: "equals"
+          expression: "true"

@@ -1,0 +1,28 @@
+module:
+  identifier: "dim_email_messages"
+  schema: "marts"
+  table: "dim_email_messages"
+  label: "Email Messages"
+  description: "One row per provider email message across Resend and SendGrid."
+  dimensions:
+    - column: "source"
+      type: "categorical"
+      label: "Email Provider"
+      description: "Provider that sent the email message."
+    - column: "subject"
+      type: "categorical"
+      label: "Email Subject"
+      description: "Subject line supplied by the email provider."
+  joinPaths:
+    - from:
+        column: "email_id"
+      to:
+        table: "fct_email_events"
+        column: "email_id"
+      type: "one-to-many"
+    - from:
+        column: "email_id"
+      to:
+        table: "fct_email_subscriber_messages"
+        column: "email_id"
+      type: "one-to-many"

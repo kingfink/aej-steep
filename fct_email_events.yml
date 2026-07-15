@@ -1,0 +1,80 @@
+module:
+  identifier: "fct_email_events"
+  schema: "marts"
+  table: "fct_email_events"
+  label: "Email Activity"
+  description: "One row per provider email event and recipient across Resend and SendGrid."
+  dimensions:
+    - column: "event_type"
+      type: "categorical"
+      label: "Event Type"
+      description: "Provider-independent event type such as delivered, opened, or clicked."
+    - column: "is_engagement"
+      type: "categorical"
+      label: "Is Engagement"
+      description: "Whether the event is an open or click."
+    - column: "is_privacy_or_bot_like"
+      type: "categorical"
+      label: "Is Privacy or Bot Like"
+      description: "Whether an open or click was classified as privacy-proxied or bot-like."
+  metrics:
+    - identifier: "email_events"
+      name: "Email events"
+      description: "Number of provider email events, including delivery and recipient activity."
+      category: "Email"
+      type: "count"
+      time: "fct_email_events.event_ts"
+      is_unlisted: true
+      slices:
+        - name: "Delivered"
+          identifier: "delivered"
+          filter:
+            column: "event_type"
+            operator: "equals"
+            expression: "delivered"
+        - name: "Opened"
+          identifier: "opened"
+          filter:
+            column: "event_type"
+            operator: "equals"
+            expression: "opened"
+        - name: "Clicked"
+          identifier: "clicked"
+          filter:
+            column: "event_type"
+            operator: "equals"
+            expression: "clicked"
+        - name: "Bounced"
+          identifier: "bounced"
+          filter:
+            column: "event_type"
+            operator: "equals"
+            expression: "bounced"
+      dimensions:
+        - "event_type"
+        - "is_engagement"
+        - "is_privacy_or_bot_like"
+        - "marts.dim_email_messages.*"
+    - identifier: "engaged_email_subscribers"
+      name: "Engaged email subscribers"
+      description: "Unique known subscribers with an open or click. Privacy-proxied and bot-like activity remains included and can be filtered using the available dimension."
+      category: "Email"
+      type: "count-distinct"
+      time: "fct_email_events.event_ts"
+      distinct_on: "fct_email_events.subscriber_id"
+      filters:
+        - column: "is_engagement"
+          operator: "equals"
+          expression: "true"
+      cohort:
+        time_dimension: "marts.dim_email_subscribers.min_subscribed_ts"
+        label: "First subscribed at"
+        calculate_retention: true
+        time_grains:
+          - "weekly"
+          - "monthly"
+        delta_time_calculation_type: "calendar-periods"
+      dimensions:
+        - "event_type"
+        - "is_privacy_or_bot_like"
+        - "marts.dim_email_messages.*"
