@@ -1,0 +1,6 @@
+# Rename this file to targets.yml after creating and populating the warehouse table.
+# The table must follow Steep's targets table format:
+# https://help.steep.app/using-steep/targets
+targets:
+  schema: "marts"
+  table: "email_metric_targets"

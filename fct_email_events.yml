@@ -24,6 +24,7 @@ module:
       category: "Email"
       type: "count"
       time: "fct_email_events.event_ts"
+      is_unlisted: true
       slices:
         - name: "Delivered"
           identifier: "delivered"
@@ -53,6 +54,7 @@ module:
         - "event_type"
         - "is_engagement"
         - "is_privacy_or_bot_like"
+        - "marts.dim_email_messages.*"
     - identifier: "engaged_email_subscribers"
       name: "Engaged email subscribers"
       description: "Unique known subscribers with an open or click. Privacy-proxied and bot-like activity remains included and can be filtered using the available dimension."
@@ -64,6 +66,15 @@ module:
         - column: "is_engagement"
           operator: "equals"
           expression: "true"
+      cohort:
+        time_dimension: "marts.dim_email_subscribers.min_subscribed_ts"
+        label: "First subscribed at"
+        calculate_retention: true
+        time_grains:
+          - "weekly"
+          - "monthly"
+        delta_time_calculation_type: "calendar-periods"
       dimensions:
         - "event_type"
         - "is_privacy_or_bot_like"
+        - "marts.dim_email_messages.*"

@@ -7,8 +7,8 @@ module:
   dimensions:
     - column: "is_subscribed"
       type: "categorical"
-      label: "Is Subscribed"
-      description: "Whether the subscriber entered the date subscribed or subscribed during the date."
+      label: "Was Subscribed on Date"
+      description: "Whether the subscriber entered the date subscribed or subscribed during the date. This is historical daily state, not current subscriber state."
   metrics:
     - identifier: "email_subscribers"
       name: "Email subscribers"
