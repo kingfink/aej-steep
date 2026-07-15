@@ -4,6 +4,11 @@ module:
   table: "dim_email_subscribers"
   label: "Email Subscribers"
   description: "One row per known subscriber, with current subscription state and lifecycle timestamps. Email addresses are intentionally excluded from Steep."
+  dimensions:
+    - column: "min_subscribed_ts"
+      type: "time"
+      label: "First Subscribed At"
+      description: "Earliest known subscription timestamp, used to group subscriber acquisition cohorts."
   joinPaths:
     - from:
         column: "subscriber_id"
