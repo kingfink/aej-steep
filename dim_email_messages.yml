@@ -1,6 +1,6 @@
 module:
   identifier: "dim_email_messages"
-  schema: "marts"
+  schema: "dbt_prd"
   table: "dim_email_messages"
   label: "Email Messages"
   description: "One row per provider email message across Resend and SendGrid."

@@ -1,6 +1,6 @@
 module:
   identifier: "fct_email_subscribers_daily"
-  schema: "marts"
+  schema: "dbt_prd"
   table: "fct_email_subscribers_daily"
   label: "Daily Email Subscribers"
   description: "One row per UTC date and known subscriber, indicating whether the subscriber was subscribed at any point during the date."

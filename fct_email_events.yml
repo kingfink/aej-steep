@@ -1,6 +1,6 @@
 module:
   identifier: "fct_email_events"
-  schema: "marts"
+  schema: "dbt_prd"
   table: "fct_email_events"
   label: "Email Activity"
   description: "One row per provider email event and recipient across Resend and SendGrid."
@@ -54,7 +54,7 @@ module:
         - "event_type"
         - "is_engagement"
         - "is_privacy_or_bot_like"
-        - "marts.dim_email_messages.*"
+        - "dbt_prd.dim_email_messages.*"
     - identifier: "engaged_email_subscribers"
       name: "Engaged email subscribers"
       description: "Unique known subscribers with an open or click. Privacy-proxied and bot-like activity remains included and can be filtered using the available dimension."
@@ -67,7 +67,7 @@ module:
           operator: "equals"
           expression: "true"
       cohort:
-        time_dimension: "marts.dim_email_subscribers.min_subscribed_ts"
+        time_dimension: "dbt_prd.dim_email_subscribers.min_subscribed_ts"
         label: "First subscribed at"
         calculate_retention: true
         time_grains:
@@ -77,4 +77,4 @@ module:
       dimensions:
         - "event_type"
         - "is_privacy_or_bot_like"
-        - "marts.dim_email_messages.*"
+        - "dbt_prd.dim_email_messages.*"

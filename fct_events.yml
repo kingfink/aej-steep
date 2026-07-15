@@ -1,6 +1,6 @@
 module:
   identifier: "fct_events"
-  schema: "marts"
+  schema: "dbt_prd"
   table: "fct_events"
   label: "Events"
   description: "GA4 Events"

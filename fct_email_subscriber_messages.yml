@@ -1,6 +1,6 @@
 module:
   identifier: "fct_email_subscriber_messages"
-  schema: "marts"
+  schema: "dbt_prd"
   table: "fct_email_subscriber_messages"
   label: "Email Subscriber Messages"
   description: "One row per email message and known subscriber, with delivery and engagement outcomes aggregated from provider events."
@@ -50,7 +50,7 @@ module:
       type: "count"
       time: "fct_email_subscriber_messages.min_sent_ts"
       dimensions:
-        - "marts.dim_email_messages.*"
+        - "dbt_prd.dim_email_messages.*"
     - identifier: "email_subscriber_messages_delivered"
       name: "Email subscriber messages delivered"
       description: "Number of subscriber messages with a delivered event."
@@ -59,7 +59,7 @@ module:
       time: "fct_email_subscriber_messages.min_sent_ts"
       sql_expression: "countif(fct_email_subscriber_messages.min_delivered_ts is not null)"
       dimensions:
-        - "marts.dim_email_messages.*"
+        - "dbt_prd.dim_email_messages.*"
     - identifier: "email_subscriber_messages_opened"
       name: "Email subscriber messages opened"
       description: "Number of delivered subscriber messages with at least one open event, including privacy-proxied and bot-like activity."
@@ -68,7 +68,7 @@ module:
       time: "fct_email_subscriber_messages.min_sent_ts"
       sql_expression: "countif(fct_email_subscriber_messages.min_delivered_ts is not null and fct_email_subscriber_messages.min_opened_ts is not null)"
       dimensions:
-        - "marts.dim_email_messages.*"
+        - "dbt_prd.dim_email_messages.*"
     - identifier: "email_subscriber_messages_clicked"
       name: "Email subscriber messages clicked"
       description: "Number of delivered subscriber messages with at least one click event, including privacy-proxied and bot-like activity."
@@ -77,7 +77,7 @@ module:
       time: "fct_email_subscriber_messages.min_sent_ts"
       sql_expression: "countif(fct_email_subscriber_messages.min_delivered_ts is not null and fct_email_subscriber_messages.min_clicked_ts is not null)"
       dimensions:
-        - "marts.dim_email_messages.*"
+        - "dbt_prd.dim_email_messages.*"
     - identifier: "email_delivery_rate"
       name: "Email delivery rate"
       description: "Percentage of subscriber messages with a delivered event."
@@ -87,7 +87,7 @@ module:
       denominator: "email_subscriber_messages"
       format: "percentage"
       dimensions:
-        - "marts.dim_email_messages.*"
+        - "dbt_prd.dim_email_messages.*"
     - identifier: "email_open_rate"
       name: "Email open rate"
       description: "Percentage of delivered subscriber messages with at least one open event, including privacy-proxied and bot-like activity."
@@ -97,7 +97,7 @@ module:
       denominator: "email_subscriber_messages_delivered"
       format: "percentage"
       dimensions:
-        - "marts.dim_email_messages.*"
+        - "dbt_prd.dim_email_messages.*"
     - identifier: "email_click_rate"
       name: "Email click rate"
       description: "Percentage of delivered subscriber messages with at least one click event, including privacy-proxied and bot-like activity."
@@ -107,4 +107,4 @@ module:
       denominator: "email_subscriber_messages_delivered"
       format: "percentage"
       dimensions:
-        - "marts.dim_email_messages.*"
+        - "dbt_prd.dim_email_messages.*"

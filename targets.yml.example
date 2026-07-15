@@ -2,5 +2,5 @@
 # The table must follow Steep's targets table format:
 # https://help.steep.app/using-steep/targets
 targets:
-  schema: "marts"
+  schema: "dbt_prd"
   table: "email_metric_targets"
