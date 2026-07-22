@@ -28,6 +28,12 @@ module:
         table: "fct_email_subscribers_daily"
         column: "subscriber_id"
       type: "one-to-many"
+    - from:
+        column: "subscriber_id"
+      to:
+        table: "fct_form_submissions"
+        column: "subscriber_id"
+      type: "one-to-many"
   entities:
     - identifier: "email_subscriber"
       name: "Email Subscriber"
@@ -50,3 +56,4 @@ module:
         - "engaged_email_subscribers"
         - "email_subscriber_messages_opened"
         - "email_subscriber_messages_clicked"
+        - "form_submissions"
