@@ -6,8 +6,11 @@ This repository is published as a small reference and showcase of defining metri
 
 ## Models
 
+- [`dim_jobs.yml`](dim_jobs.yml) defines PII-safe job dimensions for form-submission analysis.
+- [`dim_organizations.yml`](dim_organizations.yml) defines PII-safe organization dimensions for form-submission analysis.
 - [`dim_email_messages.yml`](dim_email_messages.yml) defines shared provider and subject dimensions for message and event metrics.
 - [`dim_email_subscribers.yml`](dim_email_subscribers.yml) defines subscriber join paths and PII-safe entity drill-downs.
+- [`fct_form_submissions.yml`](fct_form_submissions.yml) defines submission and known-submitter metrics, canonical form slices, and joined subscriber, job, and organization dimensions.
 - [`fct_email_subscribers_daily.yml`](fct_email_subscribers_daily.yml) defines the historical subscriber-population metric.
 - [`fct_email_events.yml`](fct_email_events.yml) defines event activity, acquisition-cohort analysis, and unique engaged-subscriber metrics.
 - [`fct_email_subscriber_messages.yml`](fct_email_subscriber_messages.yml) defines subscriber-message outcomes, entity drill-downs, and delivery, open, and click rates.

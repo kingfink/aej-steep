@@ -8,7 +8,7 @@
 
 ## Source contracts
 
-- Current email models are produced by `aej-dbt` in the `dbt_prd` dataset.
+- Current email, site-content, and web-engagement models are produced by `aej-dbt` in the `dbt_prd` dataset.
 - `fct_events.yml` is a legacy SQLMesh definition and remains on `marts`.
 - Before adding or changing a module, verify its production dataset, table, columns, keys, and grain against the current upstream dbt model and contract.
 - Do not infer a warehouse dataset from a dbt model-directory name.
