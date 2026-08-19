@@ -32,3 +32,9 @@ module:
         table: "fct_form_submissions"
         column: "organization_id"
       type: "one-to-many"
+    - from:
+        column: "organization_id"
+      to:
+        table: "fct_web_events"
+        column: "organization_id"
+      type: "one-to-many"
