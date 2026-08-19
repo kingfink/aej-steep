@@ -32,3 +32,15 @@ module:
         table: "fct_form_submissions"
         column: "job_id"
       type: "one-to-many"
+    - from:
+        column: "job_id"
+      to:
+        table: "fct_web_events"
+        column: "job_id"
+      type: "one-to-many"
+    - from:
+        column: "job_id"
+      to:
+        table: "fct_email_events"
+        column: "job_id"
+      type: "one-to-many"

@@ -1,0 +1,30 @@
+module:
+  identifier: "dim_email_campaigns"
+  schema: "dbt_prd"
+  table: "dim_email_campaigns"
+  label: "Email Campaigns"
+  description: "One row per email campaign, where a campaign is the batch of messages sharing a provider, subject, and send date. A campaign is the entity that corresponds to a newsletter issue, since a message is a single recipient send. Transactional and test sends are campaigns too."
+  dimensions:
+    - column: "campaign_name"
+      type: "categorical"
+      label: "Campaign Name"
+      description: "Campaign name taken from the utm_campaign parameter on the campaign's tracked links. Null for campaigns whose links carry no campaign parameter and for campaigns that were never clicked."
+    - column: "subject"
+      type: "categorical"
+      label: "Campaign Subject"
+      description: "Campaign subject line when supplied by the provider. Always null for SendGrid, which did not record subjects."
+    - column: "is_test"
+      type: "categorical"
+      label: "Is Test Campaign"
+      description: "Whether the campaign is a test send, identified by a bracketed TEST subject prefix. Filter these out before reporting on newsletter performance."
+    - column: "campaign_date"
+      type: "time"
+      label: "Campaign Date"
+      description: "UTC date the campaign was sent, anchored to the earliest sent event across the campaign's messages."
+  joinPaths:
+    - from:
+        column: "email_campaign_id"
+      to:
+        table: "dim_email_messages"
+        column: "email_campaign_id"
+      type: "one-to-many"
