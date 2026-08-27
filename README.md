@@ -22,6 +22,8 @@ This repository is published as a small reference and showcase of defining metri
 
 Current Analytics Engineering Jobs transformations live in [aej-dbt](https://github.com/kingfink/aej-dbt).
 
+For automation-safe job lookups, use `Organization Slug` and `Job Slug` together. The pair maps directly to `docs/jobs/{organization_slug}/{job_slug}.md`; organization names and job titles are display labels and may change.
+
 This is not a standalone project. The underlying warehouse models, data, credentials, and Steep workspace are not included.
 
 ## Rights
