@@ -5,6 +5,10 @@ module:
   label: "Organizations"
   description: "One row per organization published on Analytics Engineering Jobs."
   dimensions:
+    - column: "organization_slug"
+      type: "categorical"
+      label: "Organization Slug"
+      description: "Stable external and repository identifier for the organization."
     - column: "name"
       type: "categorical"
       label: "Organization"
