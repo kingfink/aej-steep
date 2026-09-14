@@ -6,13 +6,18 @@ This repository is published as a small reference and showcase of defining metri
 
 ## Models
 
-- [`dim_jobs.yml`](dim_jobs.yml) defines PII-safe job dimensions and the join paths that rank jobs by form submissions, on-site traffic, apply clicks, and newsletter link clicks.
-- [`dim_organizations.yml`](dim_organizations.yml) defines PII-safe organization dimensions and the join paths to form submissions and on-site web events.
+- [`dim_jobs.yml`](dim_jobs.yml) defines PII-safe job dimensions and the join paths that rank jobs by form submissions, on-site traffic, apply clicks, newsletter link clicks, and search performance.
+- [`dim_organizations.yml`](dim_organizations.yml) defines PII-safe organization dimensions and the join paths to form submissions, on-site web events, and search performance.
+- [`dim_web_sessions.yml`](dim_web_sessions.yml) defines session acquisition channel and entry attribution dimensions and the join paths to web events and form submissions.
+- [`dim_pages.yml`](dim_pages.yml) defines page path and page type dimensions and the join paths to web events and URL-level search performance, so on-site traffic and search demand slice by the same page.
+- [`dim_countries.yml`](dim_countries.yml) defines country and continent dimensions and the join paths to URL-level and site-level search performance.
 - [`dim_email_messages.yml`](dim_email_messages.yml) defines shared provider and subject dimensions for message and event metrics.
 - [`dim_email_campaigns.yml`](dim_email_campaigns.yml) defines newsletter-issue dimensions, including campaign name, subject, send date, and the test-send flag.
 - [`dim_email_subscribers.yml`](dim_email_subscribers.yml) defines subscriber join paths and PII-safe entity drill-downs.
-- [`fct_web_events.yml`](fct_web_events.yml) defines page-view, apply-click, visitor, and apply-click-rate metrics for on-site job popularity, joined to job and organization dimensions.
-- [`fct_form_submissions.yml`](fct_form_submissions.yml) defines submission and known-submitter metrics, canonical form slices, and joined subscriber, job, and organization dimensions.
+- [`fct_web_events.yml`](fct_web_events.yml) defines page-view, apply-click, visitor, and apply-click-rate metrics for on-site job popularity, joined to job, organization, session channel, and page dimensions, plus page view attribution coverage.
+- [`fct_form_submissions.yml`](fct_form_submissions.yml) defines submission and known-submitter metrics, canonical form slices, and joined subscriber, job, organization, and session channel dimensions, plus form submission attribution coverage.
+- [`fct_search_performance.yml`](fct_search_performance.yml) defines URL-level Search Console impressions, clicks, click-through rate, and average position, joined to page, country, job, and organization dimensions.
+- [`fct_search_performance_site.yml`](fct_search_performance_site.yml) defines property-level Search Console impressions, clicks, click-through rate, and best-result average position. It is deliberately kept separate from the URL-level module because property totals are lower than URL totals.
 - [`fct_email_subscribers_daily.yml`](fct_email_subscribers_daily.yml) defines the historical subscriber-population metric.
 - [`fct_email_events.yml`](fct_email_events.yml) defines event activity, acquisition-cohort analysis, unique engaged-subscriber metrics, and newsletter link-click metrics resolved to the job each link points at.
 - [`fct_email_subscriber_messages.yml`](fct_email_subscriber_messages.yml) defines subscriber-message outcomes, entity drill-downs, and delivery, open, and click rates.

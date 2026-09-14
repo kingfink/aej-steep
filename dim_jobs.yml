@@ -52,3 +52,9 @@ module:
         table: "fct_email_events"
         column: "job_id"
       type: "one-to-many"
+    - from:
+        column: "job_id"
+      to:
+        table: "fct_search_performance_daily"
+        column: "job_id"
+      type: "one-to-many"

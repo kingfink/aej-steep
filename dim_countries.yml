@@ -1,0 +1,36 @@
+module:
+  identifier: "dim_countries"
+  schema: "dbt_prd"
+  table: "dim_countries"
+  label: "Countries"
+  description: "One row per ISO 3166-1 country plus Kosovo. Search rows where Google could not determine the country have no country."
+  dimensions:
+    - column: "country_name"
+      type: "categorical"
+      label: "Country"
+      description: "Readable country name."
+    - column: "alpha_2_code"
+      type: "categorical"
+      label: "Country Code (Alpha-2)"
+      description: "Uppercase ISO 3166-1 alpha-2 code, or XK for Kosovo."
+    - column: "alpha_3_code"
+      type: "categorical"
+      label: "Country Code (Alpha-3)"
+      description: "Uppercase ISO 3166-1 alpha-3 code, or XKK for Kosovo."
+    - column: "continent_name"
+      type: "categorical"
+      label: "Continent"
+      description: "Continent the country belongs to."
+  joinPaths:
+    - from:
+        column: "country_id"
+      to:
+        table: "fct_search_performance_daily"
+        column: "country_id"
+      type: "one-to-many"
+    - from:
+        column: "country_id"
+      to:
+        table: "fct_search_performance_site_daily"
+        column: "country_id"
+      type: "one-to-many"
