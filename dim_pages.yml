@@ -1,0 +1,22 @@
+module:
+  identifier: "dim_pages"
+  schema: "dbt_prd"
+  table: "dim_pages"
+  label: "Pages"
+  description: "One row per site page, keyed on the normalized page path and classified by page type."
+  dimensions:
+    - column: "page_path"
+      type: "categorical"
+      label: "Site Page Path"
+      description: "Site path with scheme, host, query string, and fragment removed and exactly one trailing slash."
+    - column: "page_type"
+      type: "categorical"
+      label: "Page Type"
+      description: "Kind of page the path addresses. Legacy flat job paths are job pages that resolve to no job."
+  joinPaths:
+    - from:
+        column: "page_id"
+      to:
+        table: "fct_search_performance_daily"
+        column: "page_id"
+      type: "one-to-many"

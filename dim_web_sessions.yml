@@ -1,0 +1,40 @@
+module:
+  identifier: "dim_web_sessions"
+  schema: "dbt_prd"
+  table: "dim_web_sessions"
+  label: "Web Sessions"
+  description: "One row per PostHog session captured on the production site, carrying the session entry attribution and the acquisition channel derived from it. PostHog is consent-gated, so sessions and every count split by them are a floor on real traffic. A web event or form submission with no session context has a null session_id and therefore no channel at all, which is distinct from both direct and unknown."
+  dimensions:
+    - column: "channel"
+      type: "categorical"
+      label: "Channel"
+      description: "Acquisition channel of the session, from a port of PostHog's default channel type. internal is not direct traffic: it is a session whose entry referrer is the site's own domain, produced when the 30-minute session window rolls over mid-visit, and it accounts for a large share of sessions. unknown is a non-direct session with no referring domain and no resolvable campaign. A fact row with no session context has no channel, which is distinct from both direct and unknown."
+    - column: "session_referring_domain"
+      type: "categorical"
+      label: "Session Referring Domain"
+      description: "Host the session was referred from, or $direct when the visitor arrived with no referrer."
+    - column: "session_utm_source"
+      type: "categorical"
+      label: "Session UTM Source"
+      description: "Lowercased campaign source on the session entry URL."
+    - column: "session_utm_medium"
+      type: "categorical"
+      label: "Session UTM Medium"
+      description: "Lowercased campaign medium on the session entry URL."
+    - column: "session_utm_campaign"
+      type: "categorical"
+      label: "Session UTM Campaign"
+      description: "Campaign name on the session entry URL."
+  joinPaths:
+    - from:
+        column: "session_id"
+      to:
+        table: "fct_web_events"
+        column: "session_id"
+      type: "one-to-many"
+    - from:
+        column: "session_id"
+      to:
+        table: "fct_form_submissions"
+        column: "session_id"
+      type: "one-to-many"

@@ -42,3 +42,9 @@ module:
         table: "fct_web_events"
         column: "organization_id"
       type: "one-to-many"
+    - from:
+        column: "organization_id"
+      to:
+        table: "fct_search_performance_daily"
+        column: "organization_id"
+      type: "one-to-many"
