@@ -31,7 +31,7 @@ module:
   entities:
     - identifier: "email_campaign"
       name: "Email Campaign"
-      icon_name: "mail"
+      icon_name: "newspaper"
       primary_key: "email_campaign_id"
       properties:
         - column: "campaign_name"

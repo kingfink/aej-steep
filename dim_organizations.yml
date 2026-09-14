@@ -51,7 +51,7 @@ module:
   entities:
     - identifier: "organization"
       name: "Organization"
-      icon_name: "briefcase"
+      icon_name: "office-building"
       primary_key: "organization_id"
       properties:
         - column: "name"
