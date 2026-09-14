@@ -29,7 +29,7 @@ module:
   entities:
     - identifier: "page"
       name: "Page"
-      icon_name: "briefcase"
+      icon_name: "document"
       primary_key: "page_id"
       properties:
         - column: "page_path"

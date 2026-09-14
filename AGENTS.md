@@ -15,11 +15,19 @@
 - `targets.yml.example` is documentation only. Do not treat it as an active Steep targets registration.
 - Keep PII, including subscriber email addresses, out of Steep definitions.
 
+## Module roles
+
+- Fact modules (`fct_*.yml`) hold metrics and the dimensions that exist only on that fact, such as a search query or a link type.
+- Dimension modules (`dim_*.yml`) hold descriptive dimensions, entities, and join paths. Never define metrics on a dimension module.
+- A dimension holds current state only. To count dimension records over time, such as active jobs or subscribers by month, add a snapshot fact first, as `fct_email_subscribers_daily` does for subscribers.
+- Declare each join path once, on the "one" side of the relationship, with `type: "one-to-many"` (or `"one-to-one"` when it truly is). In this repository that is always the dimension, including dimension-to-dimension joins such as `dim_email_campaigns` to `dim_email_messages`. Steep's code reference allows only `one-to-one` and `one-to-many`, so a fact-side `many-to-one` join cannot be expressed, and a declared join is usable from both sides.
+- Steep follows join paths at most two steps away. A metric or entity that needs a table three steps away needs a more direct join.
+
 ## Entities
 
 - Define entities only on dimension modules (`dim_*.yml`), never on fact modules. An entity is the record-level view of a dimension, so a drill-down from a dimension value lists the records that value describes.
 - If a drill-down needs records that no dimension describes, add the dimension first. Not every dimension needs an entity.
-- Use only `icon_name` values confirmed by a warning-free Steep sync: `briefcase`, `mail`, and `user`. Steep accepts only its own kebab-case icon names, and an unsupported name syncs with a warning rather than an error. `building`, `file`, and `send` are known to be unsupported. Add a name to the confirmed list only after checking Steep sync history.
+- Use only `icon_name` values from the supported icon list in [Steep's code reference](https://help.steep.app/setup-and-manage/code-reference). An unsupported name syncs with a warning, not an error, and falls back to a default icon. `building`, `file`, and `send` are not supported; check the list rather than guessing a common icon name.
 - Link an entity only to listed metrics whose table is reachable from the entity's table through declared join paths. Prefer metrics that already carry the entity's dimension, so the drill-down matches the breakdown.
 
 ## Validation
