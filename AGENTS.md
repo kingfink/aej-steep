@@ -19,6 +19,7 @@
 
 - Define entities only on dimension modules (`dim_*.yml`), never on fact modules. An entity is the record-level view of a dimension, so a drill-down from a dimension value lists the records that value describes.
 - If a drill-down needs records that no dimension describes, add the dimension first. Not every dimension needs an entity.
+- Use only `icon_name` values confirmed by a warning-free Steep sync: `briefcase`, `mail`, and `user`. Steep accepts only its own kebab-case icon names, and an unsupported name syncs with a warning rather than an error. `building`, `file`, and `send` are known to be unsupported. Add a name to the confirmed list only after checking Steep sync history.
 - Link an entity only to listed metrics whose table is reachable from the entity's table through declared join paths. Prefer metrics that already carry the entity's dimension, so the drill-down matches the breakdown.
 
 ## Validation
