@@ -15,6 +15,12 @@
 - `targets.yml.example` is documentation only. Do not treat it as an active Steep targets registration.
 - Keep PII, including subscriber email addresses, out of Steep definitions.
 
+## Entities
+
+- Define entities only on dimension modules (`dim_*.yml`), never on fact modules. An entity is the record-level view of a dimension, so a drill-down from a dimension value lists the records that value describes.
+- If a drill-down needs records that no dimension describes, add the dimension first. Not every dimension needs an entity.
+- Link an entity only to listed metrics whose table is reachable from the entity's table through declared join paths. Prefer metrics that already carry the entity's dimension, so the drill-down matches the breakdown.
+
 ## Validation
 
 - Before committing a YAML change, parse all definitions and run every available repository check. Once the validator tracked in issue #3 is added, it is required for every YAML change.

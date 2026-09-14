@@ -26,3 +26,23 @@ module:
         table: "fct_web_events"
         column: "page_id"
       type: "one-to-many"
+  entities:
+    - identifier: "page"
+      name: "Page"
+      icon_name: "file"
+      primary_key: "page_id"
+      properties:
+        - column: "page_path"
+          name: "Page path"
+          type: "string"
+        - column: "page_type"
+          name: "Page type"
+          type: "string"
+      metrics:
+        - "search_impressions"
+        - "search_clicks"
+        - "search_ctr"
+        - "average_position"
+        - "page_views"
+        - "apply_clicks"
+        - "web_visitors"
