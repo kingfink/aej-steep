@@ -3,7 +3,7 @@ module:
   schema: "dbt_prd"
   table: "dim_pages"
   label: "Pages"
-  description: "One row per site page, keyed on the normalized page path and classified by page type."
+  description: "One row per site page, keyed on the normalized page path and classified by page type. Pages are the distinct paths of both Search Console and PostHog, so on-site web events and search performance slice by the same page."
   dimensions:
     - column: "page_path"
       type: "categorical"
@@ -18,5 +18,11 @@ module:
         column: "page_id"
       to:
         table: "fct_search_performance_daily"
+        column: "page_id"
+      type: "one-to-many"
+    - from:
+        column: "page_id"
+      to:
+        table: "fct_web_events"
         column: "page_id"
       type: "one-to-many"
