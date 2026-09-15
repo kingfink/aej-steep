@@ -35,6 +35,7 @@
 
 - Before committing a YAML change, parse all definitions and run every available repository check. Once the validator tracked in issue #3 is added, it is required for every YAML change.
 - YAML parsing alone is not sufficient evidence of semantic or runtime validity.
+- Do not build a `derived-ratio` from metrics with `time_aggregation: "last-date"`. Steep syncs it, but its generated query references a `time` column that the operand subqueries drop, and BigQuery fails with a datasource error. Define a `custom-ratio` with `time_aggregation: "last-date"` on the same module instead.
 - Qualified dimensions, cohorts, derived metrics, joins, and entity metric references must resolve within the local semantic graph.
 - A cohort time dimension must be declared as a `time` dimension on the referenced module. An entity property alone is insufficient.
 - Every newly encountered, locally detectable Steep sync failure must produce a regression test before or alongside its fix so the same failure does not recur.
