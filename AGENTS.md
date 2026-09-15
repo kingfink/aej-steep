@@ -22,6 +22,7 @@
 - A dimension holds current state only. To count dimension records over time, such as active jobs or subscribers by month, add a snapshot fact first, as `fct_email_subscribers_daily` does for subscribers.
 - Declare each join path once, on the "one" side of the relationship, with `type: "one-to-many"` (or `"one-to-one"` when it truly is). In this repository that is always the dimension, including dimension-to-dimension joins such as `dim_email_campaigns` to `dim_email_messages`. Steep's code reference allows only `one-to-one` and `one-to-many`, so a fact-side `many-to-one` join cannot be expressed, and a declared join is usable from both sides.
 - Steep follows join paths at most two steps away. A metric or entity that needs a table three steps away needs a more direct join.
+- Use `approx_quantiles` for median and percentile metrics for simplicity. A `custom-value` expression is an aggregate inside Steep's own `group by`, and BigQuery offers `percentile_cont` only as a window function. Describe these metrics as approximate.
 
 ## Entities
 
