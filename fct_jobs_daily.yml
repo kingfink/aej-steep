@@ -3,7 +3,7 @@ module:
   schema: "dbt_prd"
   table: "fct_jobs_daily"
   label: "Daily Jobs"
-  description: "One row per UTC date and job listed on the site at any point during the date, from the date the job was added through its removal date, or through the current date while it is active. Inactive jobs with an unknown listing period, such as a missing removal date, have no rows, so history understates listed jobs; current figures are unaffected. Job attributes, including salary, level, role type, and remote status, come from Jobs and reflect current state, so a past date applies current attributes to the jobs listed then. Every metric reports the latest date in the selected range, which is the as-of date. Salary figures are advertised USD base-pay ranges annualized upstream, not offers or employee earnings."
+  description: "One row per UTC date and job listed on the site at any point during the date, from the date the job was added through its removal date, or through the current date while it is active. Inactive jobs with an unknown listing period, such as a missing removal date, have no rows, so history understates listed jobs; current figures are unaffected. Job attributes, including salary, level, role type, and remote status, come from Jobs and reflect current state, so a past date applies current attributes to the jobs listed then. Every metric reports the latest date in the selected range, which is the as-of date. Steep finds that date separately for each breakdown group, so use a range ending today; a group with no jobs listed on the final date otherwise reports the last date it had any. Salary figures are advertised USD base-pay ranges annualized upstream, not offers or employee earnings."
   metrics:
     - identifier: "listed_jobs"
       name: "Listed jobs"
@@ -28,9 +28,11 @@ module:
       name: "Listed job salary coverage"
       description: "Percentage of jobs listed on the latest date in the range that have a usable USD salary range. Label it as usable USD salary coverage, not disclosure in any currency. Coverage can be shown for groups of any size."
       category: "Jobs"
-      type: "derived-ratio"
-      numerator: "listed_jobs_with_salary"
-      denominator: "listed_jobs"
+      type: "custom-ratio"
+      time: "fct_jobs_daily.date_day"
+      time_aggregation: "last-date"
+      numerator_sql: "countif(dim_jobs.salary_annual_min is not null and dim_jobs.salary_annual_max is not null)"
+      denominator_sql: "count(*)"
       format: "percentage"
       dimensions:
         - "dbt_prd.dim_jobs.*"
