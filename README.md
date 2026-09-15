@@ -6,7 +6,8 @@ This repository is published as a small reference and showcase of defining metri
 
 ## Models
 
-- [`dim_jobs.yml`](dim_jobs.yml) defines PII-safe job dimensions, the join paths that rank jobs by form submissions, on-site traffic, apply clicks, newsletter link clicks, and search performance, and the Job entity for drilling from those metrics to job records.
+- [`dim_jobs.yml`](dim_jobs.yml) defines PII-safe job dimensions, including level, role type, and remote status, the join paths that rank jobs by form submissions, on-site traffic, apply clicks, newsletter link clicks, and search performance and that count listed jobs, and the Job entity for drilling from those metrics to job records.
+- [`fct_jobs_daily.yml`](fct_jobs_daily.yml) defines listed-job counts, usable USD salary coverage, and posted-range midpoint median and 25th/75th percentiles as of the latest date in the range. Pay summaries are empty for groups with fewer than 10 salary observations.
 - [`dim_organizations.yml`](dim_organizations.yml) defines PII-safe organization dimensions, the join paths to form submissions, on-site web events, and search performance, and the Organization entity.
 - [`dim_web_sessions.yml`](dim_web_sessions.yml) defines session acquisition channel and entry attribution dimensions and the join paths to web events and form submissions.
 - [`dim_pages.yml`](dim_pages.yml) defines page path and page type dimensions, the join paths to web events and URL-level search performance, so on-site traffic and search demand slice by the same page, and the Page entity.
