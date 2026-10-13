@@ -7,7 +7,7 @@ module:
   metrics:
     - identifier: "engaged_job_seeker_sessions"
       name: "Engaged job-seeker sessions"
-      description: "Captured sessions that reached a job-detail page while the job was active on the event date and then viewed at least two distinct pages or clicked apply. Sessions that only record their landing page are excluded, which removes visitors who never answer the cookie banner, since it blocks the page, along with real single-page readers who did not apply. A date range attributes each session to its earliest captured event; this proposed time basis must be approved against counting any qualifying activity in the range. Use a rolling 28-day range for the provisional audience-growth outcome. This metric is not a cross-channel unique-person count."
+      description: "Captured sessions that viewed a job-detail page, whether or not the job was still open, and then viewed at least two distinct pages or clicked apply. Sessions that only record their landing page are excluded, which removes visitors who never answer the cookie banner, since it blocks the page, along with real single-page readers who did not apply. A date range attributes each session to its earliest captured event; this proposed time basis must be approved against counting any qualifying activity in the range. Use a rolling 28-day range for the provisional audience-growth outcome. This metric is not a cross-channel unique-person count."
       category: "Audience growth"
       type: "custom-value"
       time: "fct_web_sessions.session_started_ts"
