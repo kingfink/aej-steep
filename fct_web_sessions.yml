@@ -20,7 +20,7 @@ module:
       category: "Audience growth"
       type: "custom-value"
       time: "fct_web_sessions.session_started_ts"
-      sql_expression: "countif(fct_web_sessions.is_engaged_job_seeker and fct_web_sessions.has_apply_click)"
+      sql_expression: "countif(fct_web_sessions.is_engaged_job_seeker and fct_web_sessions.apply_click_count > 0)"
       dimensions:
         - "dbt_prd.dim_web_sessions.*"
     - identifier: "engaged_session_apply_rate"
