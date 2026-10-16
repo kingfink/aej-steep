@@ -13,4 +13,5 @@ gcp-sa-key*.json
 # Editors and operating systems
 .DS_Store
 .idea/
-.vscode/
+.vscode/*
+!.vscode/settings.json

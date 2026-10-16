@@ -1,4 +1,3 @@
-# yaml-language-server: $schema=https://api.steep.app/v1/code/schema/module
 module:
   identifier: "fct_email_subscribers_daily"
   schema: "dbt_prd"

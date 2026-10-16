@@ -63,7 +63,7 @@ This always sends `dryRun: true` with the complete active model and prints the p
 
 The GitHub Actions workflow runs local and public API checks on pull requests and pushes to `master`. Its manual **preview** option additionally uses the repository secret `STEEP_API_KEY` and repository variable `STEEP_DATASOURCE_ID`; this authenticated step does not run on pull requests. Setting up these values remains an operator action. After merge and Steep sync, query affected metrics and at least one joined dimension through the AEJ Steep MCP.
 
-Module files include YAML language-server comments for editor validation. The targets example uses the targets-specific schema; some editors may require explicitly assigning YAML mode to its `.example` extension.
+For editor validation and autocomplete, `.vscode/settings.json` centrally associates root-level `dim_*.yml` and `fct_*.yml` files with the module schema, and `targets.yml` and `targets.yml.example` with the targets schema. It also opens the example in YAML mode. These settings work in VS Code and Cursor with the Red Hat YAML extension; other editors can use the same schema URLs in their language-server configuration.
 
 ## Rights
 
