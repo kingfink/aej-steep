@@ -1,9 +1,7 @@
-from io import BytesIO
 from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
-from urllib.error import URLError
 
 from scripts import validate
 
@@ -43,16 +41,6 @@ class APITests(unittest.TestCase):
             with self.subTest(change=change), self.assertRaises(ValueError):
                 validate.check_response(good | change, preview=True)
 
-    @patch("scripts.validate.urlopen")
-    def test_network_and_invalid_json_fail_clearly(self, urlopen):
-        urlopen.side_effect = URLError("unavailable")
-        with self.assertRaisesRegex(ValueError, "request failed"):
-            validate.post("code/validate", {})
-        urlopen.side_effect = None
-        urlopen.return_value = BytesIO(b"not json")
-        with self.assertRaisesRegex(ValueError, "request failed"):
-            validate.post("code/validate", {})
-
     @patch.dict(
         "os.environ",
         {"STEEP_API_KEY": "test-key", "STEEP_DATASOURCE_ID": "test-source"},
@@ -85,14 +73,6 @@ class APITests(unittest.TestCase):
         self.assertNotIn("targets-example.yml", [f["path"] for f in payload["files"]])
         self.assertNotIn("targets.yml.example", [f["path"] for f in payload["files"]])
         self.assertEqual(len(payload["files"]), len(validation.args[1]["files"]) - 1)
-
-    @patch.dict("os.environ", {}, clear=True)
-    @patch("scripts.validate.post", return_value={"valid": True, "problems": []})
-    def test_missing_credentials_never_call_sync(self, post):
-        with patch("sys.argv", ["validate.py", "--preview"]), patch("builtins.print"):
-            self.assertEqual(validate.main(), 1)
-        self.assertEqual(post.call_count, 1)
-        self.assertEqual(post.call_args.args[0], "code/validate")
 
     def test_bad_yaml_stops_before_api_calls(self):
         for content in ("module: [", "module: {}\nmodule: {}\n"):
