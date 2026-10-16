@@ -3,13 +3,6 @@
     "https://api.steep.app/v1/code/schema/module": [
       "/dim_*.yml",
       "/fct_*.yml"
-    ],
-    "https://api.steep.app/v1/code/schema/targets": [
-      "/targets.yml",
-      "/targets.yml.example"
     ]
-  },
-  "files.associations": {
-    "targets.yml.example": "yaml"
   }
 }

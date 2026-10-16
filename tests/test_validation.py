@@ -46,7 +46,7 @@ class APITests(unittest.TestCase):
         {"STEEP_API_KEY": "test-key", "STEEP_DATASOURCE_ID": "test-source"},
     )
     @patch("scripts.validate.post")
-    def test_validation_checks_example_but_preview_sends_only_active_files(self, post):
+    def test_preview_uses_same_definitions_and_never_applies(self, post):
         post.side_effect = [
             {"valid": True, "problems": []},
             dict(
@@ -64,15 +64,10 @@ class APITests(unittest.TestCase):
         with patch("sys.argv", ["validate.py", "--preview"]), patch("builtins.print"):
             self.assertEqual(validate.main(), 0)
         validation, preview = post.call_args_list
-        self.assertIn(
-            "targets-example.yml", [f["path"] for f in validation.args[1]["files"]]
-        )
         payload = preview.args[1]
         self.assertIs(payload["dryRun"], True)
         self.assertEqual(payload["datasourceId"], "test-source")
-        self.assertNotIn("targets-example.yml", [f["path"] for f in payload["files"]])
-        self.assertNotIn("targets.yml.example", [f["path"] for f in payload["files"]])
-        self.assertEqual(len(payload["files"]), len(validation.args[1]["files"]) - 1)
+        self.assertEqual(payload["files"], validation.args[1]["files"])
 
     def test_bad_yaml_stops_before_api_calls(self):
         for content in ("module: [", "module: {}\nmodule: {}\n"):

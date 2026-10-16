@@ -19,7 +19,6 @@ def load_files(root):
     paths = sorted([*root.glob("*.yml"), *root.glob("*.yaml")])
     if not paths:
         raise ValueError("No active Steep definitions found")
-    paths.append(root / "targets.yml.example")
     files = []
     config = YamlLintConfig(file=ROOT / ".yamllint")
     for path in paths:
@@ -29,15 +28,6 @@ def load_files(root):
             raise ValueError(f"{path.name}: " + "; ".join(map(str, problems)))
         files.append({"path": path.name, "content": content})
     return files
-
-
-def validation_files(files):
-    # The API requires .yml/.yaml paths. Renaming the example here only validates it;
-    # it never registers a target table or includes it in a sync preview.
-    return [
-        dict(f, path="targets-example.yml") if f["path"] == "targets.yml.example" else f
-        for f in files
-    ]
 
 
 def post(path, payload, token=None):
@@ -86,12 +76,10 @@ def main():
     args = parser.parse_args()
     try:
         files = load_files(ROOT)
-        result = post("code/validate", {"files": validation_files(files)})
+        result = post("code/validate", {"files": files})
         print(json.dumps(result, indent=2))
         check_response(result)
-        print(
-            f"Validated {len(files)} definitions, including the documentation-only targets example."
-        )
+        print(f"Validated {len(files)} definitions.")
         if args.preview:
             token, datasource = (
                 os.environ.get("STEEP_API_KEY"),
@@ -101,10 +89,9 @@ def main():
                 raise ValueError(
                     "Preview requires STEEP_API_KEY and STEEP_DATASOURCE_ID"
                 )
-            active = [f for f in files if f["path"] != "targets.yml.example"]
             result = post(
                 "code/syncs",
-                {"datasourceId": datasource, "dryRun": True, "files": active},
+                {"datasourceId": datasource, "dryRun": True, "files": files},
                 token,
             )
             print(json.dumps(result, indent=2))

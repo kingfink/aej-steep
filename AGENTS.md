@@ -12,7 +12,6 @@
 - `fct_events.yml` is a legacy SQLMesh definition and remains on `marts`.
 - Before adding or changing a module, verify its production dataset, table, columns, keys, and grain against the current upstream dbt model and contract.
 - Do not infer a warehouse dataset from a dbt model-directory name.
-- `targets.yml.example` is documentation only. Do not treat it as an active Steep targets registration.
 - Keep PII, including subscriber email addresses, out of Steep definitions.
 
 ## Module roles
@@ -33,7 +32,7 @@
 
 ## Validation
 
-- Before committing a YAML change, run `.venv/bin/python -m unittest discover -s tests -v` and `.venv/bin/python scripts/validate.py`. The wrapper lints and sends all definitions, including `targets.yml.example`, to Steep's public validator; use it for every YAML change. See README.md for setup and optional workspace-aware dry-run previews.
+- Before committing a YAML change, run `.venv/bin/python -m unittest discover -s tests -v` and `.venv/bin/python scripts/validate.py`. The wrapper lints and sends all definitions to Steep's public validator; use it for every YAML change. See README.md for setup and optional workspace-aware dry-run previews.
 - YAML parsing alone is not sufficient evidence of semantic or runtime validity.
 - Do not build a `derived-ratio` from metrics with `time_aggregation: "last-date"`. Steep syncs it, but its generated query references a `time` column that the operand subqueries drop, and BigQuery fails with a datasource error. Define a `custom-ratio` with `time_aggregation: "last-date"` on the same module instead.
 - Qualified dimensions, cohorts, derived metrics, joins, and entity metric references must resolve within the local semantic graph. Review relationships and derived metrics and verify them through post-sync queries. Use Steep-provided validation and previews; do not add custom semantic or repository-contract checks to the wrapper.
