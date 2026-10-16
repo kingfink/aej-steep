@@ -1,0 +1,8 @@
+{
+  "yaml.schemas": {
+    "https://api.steep.app/v1/code/schema/module": [
+      "/dim_*.yml",
+      "/fct_*.yml"
+    ]
+  }
+}

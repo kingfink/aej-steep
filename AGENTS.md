@@ -33,13 +33,12 @@
 
 ## Validation
 
-- Before committing a YAML change, parse all definitions and run every available repository check. Once the validator tracked in issue #3 is added, it is required for every YAML change.
+- Before committing a YAML change, run `.venv/bin/python -m unittest discover -s tests -v` and `.venv/bin/python scripts/validate.py`. The wrapper lints and sends all definitions to Steep's public validator; use it for every YAML change. See README.md for setup and optional workspace-aware dry-run previews.
 - YAML parsing alone is not sufficient evidence of semantic or runtime validity.
 - Do not build a `derived-ratio` from metrics with `time_aggregation: "last-date"`. Steep syncs it, but its generated query references a `time` column that the operand subqueries drop, and BigQuery fails with a datasource error. Define a `custom-ratio` with `time_aggregation: "last-date"` on the same module instead.
-- Qualified dimensions, cohorts, derived metrics, joins, and entity metric references must resolve within the local semantic graph.
+- Qualified dimensions, cohorts, derived metrics, joins, and entity metric references must resolve within the local semantic graph. Review relationships and derived metrics and verify them through post-sync queries. Use Steep-provided validation and previews; do not add custom semantic or repository-contract checks to the wrapper.
 - A cohort time dimension must be declared as a `time` dimension on the referenced module. An entity property alone is insufficient.
-- Every newly encountered, locally detectable Steep sync failure must produce a regression test before or alongside its fix so the same failure does not recur.
-- If a failure depends on warehouse state and cannot be checked generically, add a narrow repository contract test or document the invariant here.
+- Document newly encountered Steep sync or query pitfalls here and use Steep's own validation and preview capabilities where available. Keep automated tests focused on our API wrapper's behavior rather than maintaining a separate semantic validator.
 - After Steep syncs, use the Steep MCP to query the affected metrics and at least one joined dimension. Do not report runtime validation based only on YAML parsing.
 
 ## Workflow
@@ -47,4 +46,6 @@
 - Refresh `master` from the remote before starting and use a feature branch and pull request. Do not push changes directly to `master`.
 - Use connector tools first for GitHub, Steep, warehouse discovery, status, metadata, logs, and comments. Use CLI or API shell fallbacks only when the required connector action is unavailable or lacks permission.
 - Keep changes focused and update documentation when behavior or local commands change.
+- Keep documentation and responses concise and proportional to the change. Include essential commands and non-obvious behavior; omit repeated explanations and unnecessary implementation detail.
+- Prefer shared configuration or reusable code over repeating the same setting or logic across files. Use central YAML schema associations in `.vscode/settings.json` rather than adding a `yaml-language-server` comment to every definition. Keep distinct business rules separate when they need independent definitions.
 - Report the exact checks run and distinguish local validation from post-sync Steep verification.

@@ -33,6 +33,21 @@ For automation-safe job lookups, use `Organization Slug` and `Job Slug` together
 
 This is not a standalone project. The underlying warehouse models, data, credentials, and Steep workspace are not included.
 
+## Validation
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
+.venv/bin/python -m unittest discover -s tests -v
+.venv/bin/python scripts/validate.py
+```
+
+CI runs the same tests, YAML linting, and Steep validation. Validation requires network access and checks definitions, not warehouse queries.
+
+For a sync preview, set `STEEP_API_KEY` and `STEEP_DATASOURCE_ID`, then run `.venv/bin/python scripts/validate.py --preview`. It applies no changes. Verify affected queries after syncing.
+
+VS Code and Cursor users with the Red Hat YAML extension get schema validation and autocomplete from `.vscode/settings.json`.
+
 ## Rights
 
 No open-source license is granted. All rights reserved.

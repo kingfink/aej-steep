@@ -12,7 +12,14 @@ module:
   metrics:
     - identifier: "email_subscribers"
       name: "Email subscribers"
-      description: "Number of subscribers active at any point during each UTC date. SendGrid state is used through the Resend contact-import date and Resend state thereafter."
+      description: |
+        Number of subscribers active at any point during each UTC date.
+
+        **State:** A subscriber counts when they entered the date subscribed or subscribed during it. This is not an end-of-day balance.
+
+        **Time aggregation:** Coarser periods use `average/repeat`: a weekly value is an average daily count, not a weekly sum or the number of distinct subscribers seen during the week.
+
+        **Provider transition:** SendGrid state is used through the Resend contact-import date and Resend state thereafter.
       category: "Email"
       type: "count"
       time: "fct_email_subscribers_daily.date_day"

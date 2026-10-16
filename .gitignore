@@ -3,6 +3,8 @@
 .env.*
 !.env.example
 .envrc
+.venv/
+__pycache__/
 *.key
 *.pem
 service-account*.json
@@ -11,4 +13,5 @@ gcp-sa-key*.json
 # Editors and operating systems
 .DS_Store
 .idea/
-.vscode/
+.vscode/*
+!.vscode/settings.json

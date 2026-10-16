@@ -1,0 +1,35 @@
+name: Validate Steep definitions
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      preview:
+        description: Preview the complete model in the configured AEJ datasource
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m unittest discover -s tests -v
+      - run: python scripts/validate.py
+      - name: Preview sync without applying changes
+        if: github.event_name == 'workflow_dispatch' && inputs.preview
+        env:
+          STEEP_API_KEY: ${{ secrets.STEEP_API_KEY }}
+          STEEP_DATASOURCE_ID: ${{ vars.STEEP_DATASOURCE_ID }}
+        run: python scripts/validate.py --preview
