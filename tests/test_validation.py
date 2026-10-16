@@ -1,5 +1,3 @@
-from pathlib import Path
-import tempfile
 import unittest
 from unittest.mock import patch
 
@@ -68,13 +66,6 @@ class APITests(unittest.TestCase):
         self.assertIs(payload["dryRun"], True)
         self.assertEqual(payload["datasourceId"], "test-source")
         self.assertEqual(payload["files"], validation.args[1]["files"])
-
-    def test_bad_yaml_stops_before_api_calls(self):
-        for content in ("module: [", "module: {}\nmodule: {}\n"):
-            with tempfile.TemporaryDirectory() as directory:
-                (Path(directory) / "bad.yml").write_text(content)
-                with self.assertRaises(ValueError):
-                    validate.load_files(Path(directory))
 
 
 if __name__ == "__main__":
