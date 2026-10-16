@@ -65,8 +65,6 @@ The GitHub Actions workflow runs local and public API checks on pull requests an
 
 Module files include YAML language-server comments for editor validation. The targets example uses the targets-specific schema; some editors may require explicitly assigning YAML mode to its `.example` extension.
 
-The [weekly review specification](docs/weekly-review.md) describes report blocks, date settings, interpretation, and the verification still needed before publishing.
-
 ## Rights
 
 No open-source license is granted. All rights reserved.
