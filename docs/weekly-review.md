@@ -1,6 +1,6 @@
 # AEJ weekly review
 
-This is a report build specification, not a published Steep report. The available Steep connector currently points at a workspace containing a Strava Activities module, so AEJ report configuration and runtime queries have not been verified through that connection. Verify AEJ modules such as `fct_web_events` and `dim_jobs` before creating the report or previewing a sync.
+This is a report build specification, not a published Steep report. On October 16, 2026, the Steep connector exposed the 18 AEJ modules and six entities, including Job, Organization, Page, and Email Campaign. Production joined-metric queries passed as recorded below. The connector currently exposes metric queries and entity metadata, but no report creation or entity-row query tools; report configuration and row-level drill-downs remain unverified.
 
 ## Questions
 
@@ -26,7 +26,7 @@ Avoid a global channel or campaign filter: these dimensions are not shared by ev
 | Acquisition | `page_views`, `apply_clicks` | Break down each metric by `dim_web_sessions.channel`; show null separately from `direct` and `unknown`. `internal` is a session rollover, not an external acquisition channel. These two metrics support channel; `apply_click_rate` currently does not expose it. |
 | Provisional audience outcome | `engaged_job_seeker_sessions`, `engaged_session_apply_rate` | Rolling 28-day values plus a channel breakdown. Count captured sessions, not people. Preserve the landing-only exclusions and provisional time basis in the block text. |
 | Newsletter outcomes | `email_subscriber_messages_delivered`, `email_open_rate`, `email_click_rate` | Weekly table by `dim_email_messages.subject` and provider `source`. Date attribution is message send time. Privacy-proxied and bot-like activity remains included. |
-| Newsletter job attention | `job_link_clicks`, `job_link_clickers` | Table by campaign subject and campaign date from `dim_email_campaigns`, with `is_test = false`. These campaign dimensions are available on the link metrics; they are not currently exposed on the message-outcome rates. |
+| Newsletter job attention | `job_link_clicks`, `job_link_clickers` | Table by campaign subject and campaign date from `dim_email_campaigns`, with `is_test = false` and an explicit selection of newsletter campaigns. Excluding tests alone still includes transactional campaigns such as resume reviews. These campaign dimensions are available on the link metrics; they are not currently exposed on the message-outcome rates. |
 | Measurement coverage | `page_view_attribution_coverage`, `form_submission_attribution_coverage` | Weekly values with prior-week comparisons. Keep this visible beside acquisition findings. Use form coverage only for periods from August 2026 onward. |
 
 Keep the newsletter and site metrics separate where they measure different populations. In particular, do not sum visitor or subscriber distinct counts across rows. Let Steep recompute totals and ratios. Apply Top X deliberately: confirm which metric controls ranking and whether totals include values outside the visible rows.
@@ -47,6 +47,16 @@ The existing Job and Email Campaign entities are candidates for cell drill-downs
 3. Check the report's week boundaries, comparison dates, independent block periods, filters, Top X behavior, and ratio/distinct-count totals.
 4. Verify entity discovery and a cell drill-down without exposing subscriber email addresses.
 5. Record the report URL and any remaining measurement decisions here after creation.
+
+## Production query checks, October 16, 2026
+
+The AEJ Steep MCP successfully ran these queries with `hasMore: false` in every response:
+
+- `page_views` by both organization slug and job slug, October 5–11. This verifies the job join and multiple breakdowns. The response includes a null-job group; retain or explicitly separate it from identified jobs rather than treating it as a job posting.
+- `engaged_job_seeker_sessions` by acquisition channel, September 18–October 15, covering 28 completed days. This verifies the session dimension join, not approval of the provisional metric or its attribution basis.
+- `job_link_clicks` by campaign subject, October 5–11, filtered to `is_test = false`. This verifies the two-step campaign join and filter. The response includes a transactional resume-review campaign, so a newsletter-only block also needs an explicit newsletter campaign selection.
+
+These checks ran against the current production model. They do not establish warehouse freshness or verify the description edits in PR #18, which have not been merged or synced. A workspace-aware sync preview still requires the AEJ datasource identifier and API credential. No report was created.
 
 ## Release references
 
