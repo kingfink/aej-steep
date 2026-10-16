@@ -46,12 +46,14 @@ Run the same checks as CI:
 
 ```sh
 .venv/bin/python -m unittest discover -s tests -v
-.venv/bin/python scripts/validate.py --online
+.venv/bin/python scripts/validate.py
 ```
 
-The validator lints and parses every root-level `.yml`/`.yaml` definition and `targets.yml.example`, downloads Steep's official [module](https://api.steep.app/v1/code/schema/module) and [targets](https://api.steep.app/v1/code/schema/targets) schemas, and resolves the local semantic graph. It checks duplicate identifiers, joins and their two-step reachability, dimensions, cohort time dimensions, derived operands and cycles, entity metrics, module roles, dataset contracts, and the known derived-ratio/last-date failure. Schemas are reused in memory within each process, with no local copies or disk cache. Validation and the regression suite require network access; a failed download or invalid schema stops validation with an explicit error.
+The command lints and parses the root-level definitions, then sends them to Steep's credential-free [`/v1/code/validate`](https://help.steep.app/api) endpoint for structure, identifier, breakdown-dimension, and cohort checks. It fails on API errors, malformed responses, or reported problems, including warnings. No separate schema download, local schema copy, or custom semantic graph engine is maintained. The command requires network access; the focused unit tests do not.
 
-`--online` additionally sends the complete active YAML set to Steep's credential-free [`/v1/code/validate`](https://help.steep.app/api) endpoint. It fails on errors or warnings. The documentation-only targets example, workflows, and regression tests are excluded from the request. Steep's endpoint does not inspect the workspace or warehouse and does not validate metric operands; it complements local graph checks. Neither check confirms warehouse columns, types, freshness, keys, grain, or runtime query validity.
+Local safeguards cover gaps in that endpoint: AEJ datasets (including legacy `marts`), module roles, join-target and entity-metric existence, qualified-reference schemas, derived operands and slices, and the known derived-ratio/last-date failure. The targets example is sent under a synthetic `.yml` filename for validation only; it is never registered or included in a sync preview. Workflows and tests are excluded.
+
+Join reachability and derived-metric cycles remain review and post-sync verification responsibilities. Neither the public endpoint nor these focused checks verifies warehouse columns, types, freshness, keys, grain, or generated-query correctness. Avoid treating a successful pre-merge check as runtime validation.
 
 For a workspace-aware preview, configure `STEEP_API_KEY` and `STEEP_DATASOURCE_ID` in your environment, using an AEJ-scoped credential with the permissions required by the code sync endpoint, then run:
 
