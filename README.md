@@ -33,39 +33,20 @@ For automation-safe job lookups, use `Organization Slug` and `Job Slug` together
 
 This is not a standalone project. The underlying warehouse models, data, credentials, and Steep workspace are not included.
 
-## Validation and previews
-
-Install the development dependencies once:
+## Validation
 
 ```sh
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements-dev.txt
-```
-
-Run the same checks as CI:
-
-```sh
 .venv/bin/python -m unittest discover -s tests -v
 .venv/bin/python scripts/validate.py
 ```
 
-The command lints the root-level definitions, then sends them to Steep's credential-free [`/v1/code/validate`](https://help.steep.app/api) endpoint. Steep provides all semantic validation. The wrapper fails on API errors, malformed responses, or reported problems, including warnings. No custom repository checks, separate schema download, or local schema copy is maintained. The command requires network access; the wrapper's unit tests do not.
+CI runs the same tests, YAML linting, and Steep validation. Validation requires network access and checks definitions, not warehouse queries.
 
-The targets example is sent under a synthetic `.yml` filename for validation only; it is never registered or included in a sync preview. Workflows and tests are excluded.
+For a sync preview, set `STEEP_API_KEY` and `STEEP_DATASOURCE_ID`, then run `.venv/bin/python scripts/validate.py --preview`. It applies no changes. Verify affected queries after syncing.
 
-The public endpoint does not inspect the workspace or warehouse and explicitly excludes metric operands, tables, and columns. Repository conventions and known runtime pitfalls remain documented in AGENTS.md for review. Avoid treating a successful pre-merge check as runtime validation; use the optional workspace-aware preview and post-sync metric queries as appropriate.
-
-For a workspace-aware preview, configure `STEEP_API_KEY` and `STEEP_DATASOURCE_ID` in your environment, using an AEJ-scoped credential with the permissions required by the code sync endpoint, then run:
-
-```sh
-.venv/bin/python scripts/validate.py --preview
-```
-
-This always sends `dryRun: true` with the complete active model and prints the proposed creations, updates, removals, errors, and warnings. It never applies or queues a sync. Inspect removals before merging. The command fails if credentials are missing or if the preview reports errors, warnings, or an unexpected response. Confirm the datasource belongs to AEJ before configuring it.
-
-The GitHub Actions workflow runs local and public API checks on pull requests and pushes to `master`. Its manual **preview** option additionally uses the repository secret `STEEP_API_KEY` and repository variable `STEEP_DATASOURCE_ID`; this authenticated step does not run on pull requests. Setting up these values remains an operator action. After merge and Steep sync, query affected metrics and at least one joined dimension through the AEJ Steep MCP.
-
-For editor validation and autocomplete, `.vscode/settings.json` centrally associates root-level `dim_*.yml` and `fct_*.yml` files with the module schema, and `targets.yml` and `targets.yml.example` with the targets schema. It also opens the example in YAML mode. These settings work in VS Code and Cursor with the Red Hat YAML extension; other editors can use the same schema URLs in their language-server configuration.
+VS Code and Cursor users with the Red Hat YAML extension get schema validation and autocomplete from `.vscode/settings.json`.
 
 ## Rights
 

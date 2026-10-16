@@ -46,5 +46,6 @@
 - Refresh `master` from the remote before starting and use a feature branch and pull request. Do not push changes directly to `master`.
 - Use connector tools first for GitHub, Steep, warehouse discovery, status, metadata, logs, and comments. Use CLI or API shell fallbacks only when the required connector action is unavailable or lacks permission.
 - Keep changes focused and update documentation when behavior or local commands change.
+- Keep documentation and responses concise and proportional to the change. Include essential commands and non-obvious behavior; omit repeated explanations and unnecessary implementation detail.
 - Prefer shared configuration or reusable code over repeating the same setting or logic across files. Use central YAML schema associations in `.vscode/settings.json` rather than adding a `yaml-language-server` comment to every definition. Keep distinct business rules separate when they need independent definitions.
 - Report the exact checks run and distinguish local validation from post-sync Steep verification.
