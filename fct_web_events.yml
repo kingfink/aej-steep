@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://api.steep.app/v1/code/schema/module
 module:
   identifier: "fct_web_events"
   schema: "dbt_prd"
@@ -16,7 +17,12 @@ module:
   metrics:
     - identifier: "page_views"
       name: "Page views"
-      description: "Number of page views captured on the production site. Consent-gated, so this is a floor on real traffic. Group by job or organization dimensions to rank job pages by traffic, or by channel to split traffic by acquisition channel. The internal channel is not direct traffic: it is a session window rollover mid-visit. A page view with no session context has no channel, which is distinct from both direct and unknown."
+      description: |
+        Number of page views captured on the production site.
+
+        **Coverage:** PostHog is consent-gated, so this is a floor on real traffic.
+
+        **Breakdowns:** Group by job or organization to rank job pages, or by channel to review acquisition. `internal` means a session window rolled over mid-visit; it is not direct acquisition. Missing session context produces a null channel, distinct from both `direct` and `unknown`.
       category: "Web engagement"
       type: "custom-value"
       time: "fct_web_events.event_ts"
@@ -30,7 +36,12 @@ module:
         - "dbt_prd.dim_pages.*"
     - identifier: "apply_clicks"
       name: "Apply clicks"
-      description: "Number of outbound apply-link clicks. Capture begins 2026-04-21, so any range starting earlier understates apply activity and should not be trended across that date."
+      description: |
+        Number of outbound apply-link clicks.
+
+        **Interpretation:** A click records intent to leave for an application; it does not establish that an application was completed.
+
+        **History:** Capture begins 2026-04-21. Do not trend across that boundary; an earlier start date understates apply activity.
       category: "Web engagement"
       type: "custom-value"
       time: "fct_web_events.event_ts"
@@ -44,7 +55,12 @@ module:
         - "dbt_prd.dim_pages.*"
     - identifier: "web_visitors"
       name: "Web visitors"
-      description: "Unique visitors with a captured event. A visitor is an anonymous device identifier, not a person, because person profiles are disabled. Repeat visitors across devices or browsers are undercounted. A visitor with sessions in several channels is counted once in each, so channel rows do not add up to the unsliced total."
+      description: |
+        Distinct anonymous device identifiers with a captured event. Person profiles are disabled, so this is not a count of people.
+
+        **Comparisons:** One person using multiple browsers or devices can contribute several identifiers.
+
+        **Totals:** A visitor with sessions in several channels is counted once in each. Channel rows do not add up to the unsliced distinct count.
       category: "Web engagement"
       type: "count-distinct"
       time: "fct_web_events.event_ts"
@@ -92,7 +108,12 @@ module:
         - "dbt_prd.dim_organizations.*"
     - identifier: "apply_click_rate"
       name: "Apply click rate"
-      description: "Percentage of page views that produced an outbound apply click. This normalizes job popularity for unequal exposure. Apply-click capture begins 2026-04-21, so the rate reads as near zero for any range starting before that date even though page views were captured."
+      description: |
+        Outbound apply clicks divided by page views, displayed as a percentage.
+
+        **Use:** Compare apply-click activity relative to page-view volume when jobs have unequal exposure. This is not a completed-application conversion rate or a session conversion rate.
+
+        **History:** Apply-click capture begins 2026-04-21. Ranges starting earlier mix page-view history with missing apply-click history.
       category: "Web engagement"
       type: "derived-ratio"
       numerator: "apply_clicks"

@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://api.steep.app/v1/code/schema/module
 module:
   identifier: "dim_pages"
   schema: "dbt_prd"

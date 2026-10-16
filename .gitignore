@@ -3,6 +3,8 @@
 .env.*
 !.env.example
 .envrc
+.venv/
+__pycache__/
 *.key
 *.pem
 service-account*.json

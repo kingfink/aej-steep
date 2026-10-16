@@ -33,6 +33,40 @@ For automation-safe job lookups, use `Organization Slug` and `Job Slug` together
 
 This is not a standalone project. The underlying warehouse models, data, credentials, and Steep workspace are not included.
 
+## Validation and previews
+
+Install the development dependencies once:
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
+```
+
+Run the same checks as CI:
+
+```sh
+.venv/bin/python -m unittest discover -s tests -v
+.venv/bin/python scripts/validate.py --online
+```
+
+The validator lints and parses every root-level `.yml`/`.yaml` definition and `targets.yml.example`, checks the [official schema snapshots](schemas/README.md), and resolves the local semantic graph. It checks duplicate identifiers, joins and their two-step reachability, dimensions, cohort time dimensions, derived operands and cycles, entity metrics, module roles, dataset contracts, and the known derived-ratio/last-date failure. Without `--online`, these checks work offline.
+
+`--online` additionally sends the complete active YAML set to Steep's credential-free [`/v1/code/validate`](https://help.steep.app/api) endpoint. It fails on errors or warnings. The documentation-only targets example, workflows, and regression tests are excluded from the request. Steep's endpoint does not inspect the workspace or warehouse and does not validate metric operands; it complements local graph checks. Neither check confirms warehouse columns, types, freshness, keys, grain, or runtime query validity.
+
+For a workspace-aware preview, configure `STEEP_API_KEY` and `STEEP_DATASOURCE_ID` in your environment, using an AEJ-scoped credential with the permissions required by the code sync endpoint, then run:
+
+```sh
+.venv/bin/python scripts/validate.py --preview
+```
+
+This always sends `dryRun: true` with the complete active model and prints the proposed creations, updates, removals, errors, and warnings. It never applies or queues a sync. Inspect removals before merging. The command fails if credentials are missing or if the preview reports errors, warnings, or an unexpected response. Confirm the datasource belongs to AEJ before configuring it.
+
+The GitHub Actions workflow runs local and public API checks on pull requests and pushes to `master`. Its manual **preview** option additionally uses the repository secret `STEEP_API_KEY` and repository variable `STEEP_DATASOURCE_ID`; this authenticated step does not run on pull requests. Setting up these values remains an operator action. After merge and Steep sync, query affected metrics and at least one joined dimension through the AEJ Steep MCP.
+
+Module files include YAML language-server comments for editor validation. The targets example uses the targets-specific schema; some editors may require explicitly assigning YAML mode to its `.example` extension.
+
+The [weekly review specification](docs/weekly-review.md) describes report blocks, date settings, interpretation, and the verification still needed before publishing.
+
 ## Rights
 
 No open-source license is granted. All rights reserved.

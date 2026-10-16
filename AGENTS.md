@@ -33,7 +33,7 @@
 
 ## Validation
 
-- Before committing a YAML change, parse all definitions and run every available repository check. Once the validator tracked in issue #3 is added, it is required for every YAML change.
+- Before committing a YAML change, run `.venv/bin/python -m unittest discover -s tests -v` and `.venv/bin/python scripts/validate.py --online`. The validator checks all definitions, including `targets.yml.example`; use it for every YAML change. See README.md for setup and optional workspace-aware dry-run previews.
 - YAML parsing alone is not sufficient evidence of semantic or runtime validity.
 - Do not build a `derived-ratio` from metrics with `time_aggregation: "last-date"`. Steep syncs it, but its generated query references a `time` column that the operand subqueries drop, and BigQuery fails with a datasource error. Define a `custom-ratio` with `time_aggregation: "last-date"` on the same module instead.
 - Qualified dimensions, cohorts, derived metrics, joins, and entity metric references must resolve within the local semantic graph.

@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://api.steep.app/v1/code/schema/module
 module:
   identifier: "fct_email_subscriber_messages"
   schema: "dbt_prd"
@@ -52,7 +53,12 @@ module:
         - "dbt_prd.dim_email_messages.*"
     - identifier: "email_open_rate"
       name: "Email open rate"
-      description: "Percentage of delivered subscriber messages with at least one open event, including privacy-proxied and bot-like activity."
+      description: |
+        Delivered subscriber messages with at least one open, divided by delivered subscriber messages.
+
+        **Time basis:** Messages are attributed to their earliest sent-event timestamp, rather than the date of the open.
+
+        **Limitations:** Privacy-proxied and bot-like activity remains included. An open is not proof that a person read the email.
       category: "Email"
       type: "derived-ratio"
       numerator: "email_subscriber_messages_opened"
@@ -62,7 +68,12 @@ module:
         - "dbt_prd.dim_email_messages.*"
     - identifier: "email_click_rate"
       name: "Email click rate"
-      description: "Percentage of delivered subscriber messages with at least one click event, including privacy-proxied and bot-like activity."
+      description: |
+        Delivered subscriber messages with at least one click, divided by delivered subscriber messages.
+
+        **Time basis:** Messages are attributed to their earliest sent-event timestamp, rather than the date of the click. Repeated clicks do not increase the message-level numerator.
+
+        **Limitations:** Privacy-proxied and bot-like activity remains included. This is not a unique-person conversion rate.
       category: "Email"
       type: "derived-ratio"
       numerator: "email_subscriber_messages_clicked"
