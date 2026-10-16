@@ -25,6 +25,8 @@ This repository is published as a small reference and showcase of defining metri
 - [`fct_email_subscriber_messages.yml`](fct_email_subscriber_messages.yml) defines subscriber-message outcomes and delivery, open, and click rates.
 - [`fct_events.yml`](fct_events.yml) defines a Steep module and event-count metric for GA4 events. It depends on legacy SQLMesh models and is scheduled for deprecation, but is retained here as an example of the original semantic-layer implementation.
 
+[`targets.yml.example`](targets.yml.example) contains the Steep target-table registration to enable after the corresponding warehouse table has been created and populated. The intended table is `dbt_prd.email_metric_targets`; it should contain targets for `email_subscribers`, `email_delivery_rate`, `email_open_rate`, and `email_click_rate`. Ratio targets require numerator and denominator values in addition to the displayed target value.
+
 Current Analytics Engineering Jobs transformations live in [aej-dbt](https://github.com/kingfink/aej-dbt).
 
 For automation-safe job lookups, use `Organization Slug` and `Job Slug` together. The pair maps directly to `docs/jobs/{organization_slug}/{job_slug}.md`; organization names and job titles are display labels and may change.

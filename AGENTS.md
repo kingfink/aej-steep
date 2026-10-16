@@ -12,6 +12,7 @@
 - `fct_events.yml` is a legacy SQLMesh definition and remains on `marts`.
 - Before adding or changing a module, verify its production dataset, table, columns, keys, and grain against the current upstream dbt model and contract.
 - Do not infer a warehouse dataset from a dbt model-directory name.
+- `targets.yml.example` is documentation only. Do not treat it as an active Steep targets registration.
 - Keep PII, including subscriber email addresses, out of Steep definitions.
 
 ## Module roles
