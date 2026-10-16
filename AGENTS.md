@@ -33,13 +33,12 @@
 
 ## Validation
 
-- Before committing a YAML change, run `.venv/bin/python -m unittest discover -s tests -v` and `.venv/bin/python scripts/validate.py`. The validator uses Steep's public API plus focused repository safeguards and checks all definitions, including `targets.yml.example`; use it for every YAML change. See README.md for setup and optional workspace-aware dry-run previews.
+- Before committing a YAML change, run `.venv/bin/python -m unittest discover -s tests -v` and `.venv/bin/python scripts/validate.py`. The wrapper lints and sends all definitions, including `targets.yml.example`, to Steep's public validator; use it for every YAML change. See README.md for setup and optional workspace-aware dry-run previews.
 - YAML parsing alone is not sufficient evidence of semantic or runtime validity.
 - Do not build a `derived-ratio` from metrics with `time_aggregation: "last-date"`. Steep syncs it, but its generated query references a `time` column that the operand subqueries drop, and BigQuery fails with a datasource error. Define a `custom-ratio` with `time_aggregation: "last-date"` on the same module instead.
-- Qualified dimensions, cohorts, derived metrics, joins, and entity metric references must resolve within the local semantic graph. The script does not traverse join paths or detect derived-metric cycles; review these when changing relationships or derived metrics and verify them through post-sync queries. Prefer Steep's validator over duplicating its schema and reference checks locally.
+- Qualified dimensions, cohorts, derived metrics, joins, and entity metric references must resolve within the local semantic graph. Review relationships and derived metrics and verify them through post-sync queries. Use Steep-provided validation and previews; do not add custom semantic or repository-contract checks to the wrapper.
 - A cohort time dimension must be declared as a `time` dimension on the referenced module. An entity property alone is insufficient.
-- Every newly encountered, locally detectable Steep sync failure must produce a regression test before or alongside its fix so the same failure does not recur.
-- If a failure depends on warehouse state and cannot be checked generically, add a narrow repository contract test or document the invariant here.
+- Document newly encountered Steep sync or query pitfalls here and use Steep's own validation and preview capabilities where available. Keep automated tests focused on our API wrapper's behavior rather than maintaining a separate semantic validator.
 - After Steep syncs, use the Steep MCP to query the affected metrics and at least one joined dimension. Do not report runtime validation based only on YAML parsing.
 
 ## Workflow

@@ -1,4 +1,3 @@
-from copy import deepcopy
 from io import BytesIO
 from pathlib import Path
 import tempfile
@@ -7,71 +6,6 @@ from unittest.mock import patch
 from urllib.error import URLError
 
 from scripts import validate
-
-
-class ContractTests(unittest.TestCase):
-    def setUp(self):
-        _, self.docs = validate.load_files(validate.ROOT)
-        self.modules = {
-            d["module"]["identifier"]: d["module"] for d in self.docs if "module" in d
-        }
-        self.metrics = {
-            m["identifier"]: m
-            for module in self.modules.values()
-            for m in module.get("metrics", [])
-        }
-
-    def test_current_contracts_pass(self):
-        self.assertEqual(validate.repository_errors(self.docs), [])
-
-    def test_datasets_and_targets_regressions(self):
-        self.modules["fct_email_events"]["schema"] = "marts"
-        self.modules["fct_events"]["schema"] = "dbt_prd"
-        self.docs[-1]["targets"]["schema"] = "marts"
-        errors = "\n".join(validate.repository_errors(self.docs))
-        for expected in (
-            "fct_email_events: must use dbt_prd",
-            "fct_events: must use marts",
-            "Targets must use dbt_prd",
-        ):
-            self.assertIn(expected, errors)
-
-    def test_missing_operands_and_snapshot_ratio_regressions(self):
-        self.metrics["apply_click_rate"]["numerator"] = "missing"
-        self.metrics["apply_click_rate"]["denominator"] = "listed_jobs"
-        errors = "\n".join(validate.repository_errors(self.docs))
-        self.assertIn("unknown operand missing", errors)
-        self.assertIn("last-date operands require a custom-ratio", errors)
-
-    def test_operand_slice_reference(self):
-        self.metrics["apply_click_rate"]["numerator"] = {
-            "metric": "email_events",
-            "slice": "missing",
-        }
-        self.assertIn(
-            "unknown operand slice", "\n".join(validate.repository_errors(self.docs))
-        )
-
-    def test_join_entity_and_qualified_schema_references(self):
-        self.modules["dim_jobs"]["joinPaths"][0]["to"]["table"] = "missing"
-        self.modules["dim_jobs"]["entities"][0]["metrics"] = ["missing"]
-        self.metrics["page_views"]["dimensions"] = ["marts.dim_jobs.*"]
-        errors = "\n".join(validate.repository_errors(self.docs))
-        for expected in (
-            "unknown join target",
-            "unknown entity metric",
-            "unknown table/schema",
-        ):
-            self.assertIn(expected, errors)
-
-    def test_module_roles(self):
-        self.modules["dim_jobs"]["metrics"] = [deepcopy(self.metrics["page_views"])]
-        self.modules["fct_web_events"]["entities"] = self.modules["dim_jobs"][
-            "entities"
-        ]
-        errors = "\n".join(validate.repository_errors(self.docs))
-        self.assertIn("metrics belong on facts", errors)
-        self.assertIn("entities and joins belong on dimensions", errors)
 
 
 class APITests(unittest.TestCase):

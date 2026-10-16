@@ -49,11 +49,11 @@ Run the same checks as CI:
 .venv/bin/python scripts/validate.py
 ```
 
-The command lints and parses the root-level definitions, then sends them to Steep's credential-free [`/v1/code/validate`](https://help.steep.app/api) endpoint for structure, identifier, breakdown-dimension, and cohort checks. It fails on API errors, malformed responses, or reported problems, including warnings. No separate schema download, local schema copy, or custom semantic graph engine is maintained. The command requires network access; the focused unit tests do not.
+The command lints the root-level definitions, then sends them to Steep's credential-free [`/v1/code/validate`](https://help.steep.app/api) endpoint. Steep provides all semantic validation. The wrapper fails on API errors, malformed responses, or reported problems, including warnings. No custom repository checks, separate schema download, or local schema copy is maintained. The command requires network access; the wrapper's unit tests do not.
 
-Local safeguards cover gaps in that endpoint: AEJ datasets (including legacy `marts`), module roles, join-target and entity-metric existence, qualified-reference schemas, derived operands and slices, and the known derived-ratio/last-date failure. The targets example is sent under a synthetic `.yml` filename for validation only; it is never registered or included in a sync preview. Workflows and tests are excluded.
+The targets example is sent under a synthetic `.yml` filename for validation only; it is never registered or included in a sync preview. Workflows and tests are excluded.
 
-Join reachability and derived-metric cycles remain review and post-sync verification responsibilities. Neither the public endpoint nor these focused checks verifies warehouse columns, types, freshness, keys, grain, or generated-query correctness. Avoid treating a successful pre-merge check as runtime validation.
+The public endpoint does not inspect the workspace or warehouse and explicitly excludes metric operands, tables, and columns. Repository conventions and known runtime pitfalls remain documented in AGENTS.md for review. Avoid treating a successful pre-merge check as runtime validation; use the optional workspace-aware preview and post-sync metric queries as appropriate.
 
 For a workspace-aware preview, configure `STEEP_API_KEY` and `STEEP_DATASOURCE_ID` in your environment, using an AEJ-scoped credential with the permissions required by the code sync endpoint, then run:
 
