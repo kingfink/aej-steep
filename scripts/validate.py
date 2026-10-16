@@ -3,6 +3,7 @@
 import argparse
 from collections import defaultdict
 from copy import deepcopy
+from functools import cache
 import json
 import os
 from pathlib import Path
@@ -10,13 +11,39 @@ import sys
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
-from jsonschema import Draft202012Validator
+from jsonschema import Draft202012Validator, SchemaError
 import yaml
 from yamllint.config import YamlLintConfig
 from yamllint.linter import run as lint
 
 ROOT = Path(__file__).resolve().parents[1]
 API = "https://api.steep.app/v1"
+
+
+def download_schema(kind):
+    url = f"{API}/code/schema/{kind}"
+    try:
+        with urlopen(url, timeout=30) as response:
+            schema = json.load(response)
+        if (
+            not isinstance(schema, dict)
+            or schema.get("type") != "object"
+            or not isinstance(schema.get("properties"), dict)
+            or kind not in schema.get("properties", {})
+        ):
+            raise ValueError("unexpected schema structure")
+        Draft202012Validator.check_schema(schema)
+    except (OSError, ValueError, SchemaError) as exc:
+        raise ValueError(
+            f"Could not load official Steep schema from {url} ({type(exc).__name__}); validation stopped"
+        ) from None
+    return Draft202012Validator(schema)
+
+
+@cache
+def schema_validators():
+    # Reuse downloads within this process only; nothing is stored on disk.
+    return {kind: download_schema(kind) for kind in ("module", "targets")}
 
 
 def definition_paths(root):
@@ -56,12 +83,7 @@ def validate_documents(documents):
     errors = []
     modules, tables, metrics, entities = {}, {}, {}, set()
     graph = defaultdict(set)
-    schemas = {
-        kind: Draft202012Validator(
-            json.loads((ROOT / "schemas" / f"{kind}.json").read_text())
-        )
-        for kind in ("module", "targets")
-    }
+    schemas = schema_validators()
 
     def fail(context, message):
         errors.append(f"{context}: {message}")
@@ -351,8 +373,12 @@ def main():
         "--datasource-id", default=os.environ.get("STEEP_DATASOURCE_ID")
     )
     args = parser.parse_args()
-    documents, errors = load_definitions(ROOT)
-    errors.extend(validate_documents(documents))
+    try:
+        documents, errors = load_definitions(ROOT)
+        errors.extend(validate_documents(documents))
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1

@@ -1,10 +1,74 @@
 from copy import deepcopy
+from io import BytesIO
+import json
 from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
+from urllib.error import HTTPError, URLError
 
 from scripts import validate
+
+
+class SchemaDownloadTests(unittest.TestCase):
+    @patch("scripts.validate.urlopen")
+    def test_downloads_and_uses_the_official_schema(self, urlopen):
+        schema = {
+            "type": "object",
+            "properties": {"module": {"type": "object"}},
+            "required": ["module"],
+        }
+        urlopen.return_value = BytesIO(json.dumps(schema).encode())
+        validator = validate.download_schema("module")
+        urlopen.assert_called_once_with(
+            "https://api.steep.app/v1/code/schema/module", timeout=30
+        )
+        self.assertFalse(validator.is_valid({}))
+        self.assertTrue(validator.is_valid({"module": {}}))
+
+    @patch("scripts.validate.urlopen")
+    def test_download_failures_stop_validation(self, urlopen):
+        for error in (
+            URLError("unavailable"),
+            TimeoutError(),
+            HTTPError("https://api.steep.app", 503, "unavailable", {}, None),
+        ):
+            with self.subTest(error=type(error).__name__):
+                urlopen.side_effect = error
+                with self.assertRaisesRegex(ValueError, "validation stopped"):
+                    validate.download_schema("module")
+
+    @patch("scripts.validate.urlopen")
+    def test_invalid_json_and_schema_stop_validation(self, urlopen):
+        for content in (
+            b"not json",
+            b"{}",
+            b"true",
+            b'{"type":"object","properties":null}',
+            b'{"type":"object","properties":{"module":{"type":"invalid"}}}',
+        ):
+            with self.subTest(content=content):
+                urlopen.return_value = BytesIO(content)
+                with self.assertRaisesRegex(ValueError, "validation stopped"):
+                    validate.download_schema("module")
+
+    @patch(
+        "scripts.validate.schema_validators",
+        side_effect=ValueError("schema download failed"),
+    )
+    @patch("scripts.validate.post")
+    def test_cli_fails_without_sending_definitions_when_schema_fetch_fails(
+        self, post, schemas
+    ):
+        with (
+            patch("sys.argv", ["validate.py", "--online"]),
+            patch("builtins.print") as output,
+        ):
+            self.assertEqual(validate.main(), 1)
+        post.assert_not_called()
+        self.assertTrue(
+            any("schema download failed" in str(c) for c in output.call_args_list)
+        )
 
 
 class ValidationTests(unittest.TestCase):
